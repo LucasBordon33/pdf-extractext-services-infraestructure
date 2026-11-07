@@ -1,0 +1,30 @@
+services:
+  mongodb:
+    image: mongo:7-jammy
+    container_name: mongodb
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?Falta MONGO_INITDB_ROOT_USERNAME en servicios/mongodb/.env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?Falta MONGO_INITDB_ROOT_PASSWORD en servicios/mongodb/.env}
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # Ping autenticado vía mongosh (incluido en la imagen mongo:7).
+      # `$$` difiere la expansión de variables al shell del contenedor.
+      test: ["CMD-SHELL", "mongosh --quiet -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --eval 'db.adminCommand(\"ping\")'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      # Margen para el initdb del primer arranque (creación del usuario root)
+      start_period: 20s
+    networks:
+      - pdf-extractext-network
+
+volumes:
+  mongo-data:
+
+networks:
+  pdf-extractext-network:
+    external: true
