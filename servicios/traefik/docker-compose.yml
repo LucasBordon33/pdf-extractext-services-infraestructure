@@ -1,6 +1,9 @@
 services:
   reverse-proxy:
-    image: traefik:v3.5
+    # v3.7: la serie v3.5 no negocia con el Engine API de Docker 29
+    # (GET /version -> 400 sin mensaje) y el docker provider muere en
+    # loop de retry sin cargar ningún router.
+    image: traefik:v3.7
     container_name: traefik
     restart: unless-stopped
     security_opt:
