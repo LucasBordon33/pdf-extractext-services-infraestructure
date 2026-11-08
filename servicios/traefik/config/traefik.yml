@@ -25,9 +25,6 @@ entryPoints:
     address: ":6379"
   postgresql:
     address: ":5432"
-  # Nombres alineados con los labels de los compose de los microservicios
-  # (entrypoints=web / entrypoints=websecure). Con los nombres previos
-  # (http/https) ningún router de Docker encontraba su entrypoint.
   web:
     address: ":80"
     http:
@@ -35,5 +32,9 @@ entryPoints:
         entryPoint:
           to: websecure
           scheme: https
+          permanent: true
   websecure:
     address: ":443"
+
+
+ 
